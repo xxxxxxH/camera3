@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.applovin.mediation.ads.MaxAdView
+    xmlns:maxads="http://schemas.applovin.com/android/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/viewBannerAdContent"
+    maxads:adUnitId="@string/banner_ad_id"
+    android:layout_height="match_parent"/>
+

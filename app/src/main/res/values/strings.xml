@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">PerfectYou Camera</string>
+
+    <string name="base_url">https://gussh.space/</string>
+
+    <string name="lovin_insert_ad_id">1</string>
+    <string name="lovin_native_ad_id">1</string>
+    <string name="lovin_banner_ad_id">1</string>
+
+    <string name="top_on_app_id">1</string>
+
+    <string name="top_on_insert_ad_id">1</string>
+    <string name="top_on_native_ad_id">1</string>
+    <string name="top_on_banner_ad_id">1</string>
+    <string name="top_on_open_ad_id">1</string>
+
+    <string name="admob_id">ca-app-pub-3940256099942544~3347511713</string>
+
+    <string name="top_on_app_key">1</string>
+    <string name="lovin_app_key">1</string>
+
+    <string name="insert_ad_id">83a2581d5a1f4186</string>
+    <string name="native_ad_id">d45594ffb7556995</string>
+    <string name="banner_ad_id">ff7334a7b1e609cd</string>
+    <string name="open_ad_id">b5f73fe0c5db29</string>
+
+    <string name="app_id">a5aa1f9deda26d</string>
+    <string name="app_key">4f7b9ac17decb9babec83aac078742c7</string>
+
+<!--    <string name="lovin_insert_ad_id">1</string>-->
+<!--    <string name="lovin_native_ad_id">1</string>-->
+<!--    <string name="lovin_banner_ad_id">1</string>-->
+
+<!--    <string name="top_on_app_id">1</string>-->
+
+<!--    <string name="top_on_insert_ad_id">1</string>-->
+<!--    <string name="top_on_native_ad_id">1</string>-->
+<!--    <string name="top_on_banner_ad_id">1</string>-->
+<!--    <string name="top_on_open_ad_id">1</string>-->
+
+<!--    <string name="admob_id">ca-app-pub-3940256099942544~3347511713</string>-->
+
+<!--    <string name="top_on_app_key">1</string>-->
+<!--    <string name="lovin_app_key">1</string>-->
+</resources>
