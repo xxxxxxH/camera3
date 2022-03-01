@@ -16,23 +16,23 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.pipipi.camhd.R;
 
 import com.anythink.nativead.api.ATNativeAdRenderer;
 import com.anythink.nativead.api.ATNativeImageView;
 import com.anythink.nativead.unitgroup.api.CustomNativeAd;
-import com.sweetcam.app.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class NativeDemoRender implements ATNativeAdRenderer<CustomNativeAd> {
+public class TopOnRender implements ATNativeAdRenderer<CustomNativeAd> {
 
     Context mContext;
     List<View> mClickView = new ArrayList<>();
     View mCloseView;
 
-    public NativeDemoRender(Context context) {
+    public TopOnRender(Context context) {
         mContext = context;
     }
 

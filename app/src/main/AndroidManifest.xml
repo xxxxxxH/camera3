@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sweetcam.app">
+    package="com.pipipi.camhd">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.CAMERA" />
-
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -29,27 +26,39 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name="com.sweetcam.app.ui.activity.PreviewActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.sweetcam.app.ui.activity.CreationActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.sweetcam.app.ui.activity.SlimmingActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.sweetcam.app.ui.activity.AgeActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.sweetcam.app.ui.activity.CartoonActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="ScopedStorage"
-            android:value="true" />
-
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
-
+            android:value="true" /> <!-- <meta-data -->
+        <!-- android:name="com.google.android.gms.ads.APPLICATION_ID" -->
+        <!-- android:value="ca-app-pub-3940256099942544~3347511713" /> -->
         <meta-data
             android:name="applovin.sdk.key"
             android:value="RH7xIMirQp-k9XpQo6fmPQgzvCNPd1VTpxsoG4eyyoz2-fkg4HgvP7tWttcTng2iC9vnT4Mvp7Gi_69V2xZxPX" />
 
         <activity
-            android:name=".ui.activity.OldActivity"
+            android:name="com.sweetcam.app.ui.activity.OldActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activity.AnimActivity"
+            android:name="com.sweetcam.app.ui.activity.AnimActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activity.IndexActivity"
+            android:name="com.sweetcam.app.ui.activity.IndexActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -58,35 +67,31 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name=".ui.activity.ContentActivity"
+            android:name="com.sweetcam.app.ui.activity.ContentActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activity.MainActivity"
+            android:name="com.sweetcam.app.ui.activity.MainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activity.ActionActivity"
+            android:name="com.sweetcam.app.ui.activity.ActionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activity.StickerActivity"
+            android:name="com.sweetcam.app.ui.activity.StickerActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activity.LoginActivity"
+            android:name="com.sweetcam.app.ui.activity.LoginActivity"
             android:screenOrientation="portrait" />
 
         <provider
-            android:name=".MyProvider"
+            android:name="com.sweetcam.app.MyProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">
-
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
-
         </provider>
-
     </application>
 
 </manifest>

@@ -7,9 +7,9 @@ import android.widget.FrameLayout
 import com.applovin.mediation.MaxAd
 import com.applovin.mediation.MaxAdViewAdListener
 import com.applovin.mediation.MaxError
+import com.pipipi.camhd.R
 import com.sweetcam.app.utils.app
 import com.sweetcam.app.utils.loge
-import com.sweetcam.app.R
 import kotlinx.android.synthetic.main.view_banner_ad.view.*
 
 class BannerAdView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :

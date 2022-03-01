@@ -7,9 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import com.pipipi.camhd.R
 import com.sweetcam.app.Constant
 import com.sweetcam.app.callback.IDialogCallBack
-import com.sweetcam.app.R
 import com.sweetcam.app.base.BaseDialog
 import com.sweetcam.app.utils.app
 import com.sweetcam.app.utils.click

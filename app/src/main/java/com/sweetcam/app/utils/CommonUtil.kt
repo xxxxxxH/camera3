@@ -6,22 +6,24 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.sweetcam.app.BuildConfig
-import com.sweetcam.app.Constant
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.XXPermissions
+import com.pipipi.camhd.BuildConfig
+import com.sweetcam.app.Constant
 import com.sweetcam.app.Ktx
 import com.tencent.mmkv.MMKV
+import org.greenrobot.eventbus.EventBus
 import java.io.File
 import java.io.FileOutputStream
 
@@ -38,9 +40,67 @@ fun saveBitmap(name: String, bitmap: Bitmap) {
         Environment.getExternalStorageDirectory().absolutePath + File.separator + name + ".jpg"
 
     FileOutputStream(File(path)).use {
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, it)
+        try {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, it)
+        } catch (e: Exception) {
+
+        }
+
         it.flush()
     }
+}
+
+fun createBitmapFromView(view: View) {
+    view.clearFocus()
+    val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+    if (bitmap != null) {
+        val canvas = Canvas(bitmap)
+        view.draw(canvas)
+        canvas.setBitmap(null)
+    }
+    val path = File(Environment.getExternalStorageDirectory().path + File.separator)
+    val fileName = System.currentTimeMillis().toString()
+    val imgFile = File(path, "$fileName.png")
+    if (!imgFile.exists())
+        imgFile.createNewFile()
+    var fos: FileOutputStream? = null
+    try {
+        if (bitmap == null) return
+        fos = FileOutputStream(imgFile)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+        fos.flush()
+        fos.close()
+        scanNotice(view.context, imgFile)
+        EventBus.getDefault().post(MessageEvent("saveSuccess"))
+        saveKeys("keys", fileName)
+        MMKV.defaultMMKV()!!.encode(fileName, imgFile.absolutePath)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        EventBus.getDefault().post(MessageEvent("saveError"))
+    } finally {
+        fos?.flush()
+        fos!!.close()
+    }
+}
+
+fun saveKeys(key: String, keyValues: String) {
+    var keys = MMKV.defaultMMKV()!!.decodeStringSet(key)
+    if (keys == null) {
+        keys = HashSet()
+    }
+    keys.add(keyValues)
+    MMKV.defaultMMKV()!!.encode(key, keys)
+}
+
+fun scanNotice(context: Context, file: File) {
+    MediaScannerConnection.scanFile(
+        context,
+        arrayOf(file.absolutePath),
+        null,
+        object : MediaScannerConnection.MediaScannerConnectionClient {
+            override fun onMediaScannerConnected() {}
+            override fun onScanCompleted(path: String, uri: Uri) {}
+        })
 }
 
 fun AppCompatActivity.requestPermission(block: () -> Unit = {}) {
@@ -55,21 +115,17 @@ fun AppCompatActivity.requestPermission(block: () -> Unit = {}) {
         .request(object : OnPermissionCallback {
             override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
                 if (all) {
-                    block()
+                    EventBus.getDefault().post(MessageEvent("onGranted"))
                 } else {
-                    Toast.makeText(
-                        this@requestPermission,
-                        "some permissions were not granted normally",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    finish()
+                    EventBus.getDefault().post(MessageEvent("not all"))
+
                 }
             }
 
             override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
                 super.onDenied(permissions, never)
-                Toast.makeText(this@requestPermission, "no permissions", Toast.LENGTH_SHORT).show()
-                finish()
+                EventBus.getDefault().post(MessageEvent("onDenied"))
+
             }
         })
 }
@@ -110,7 +166,6 @@ val globalWidth by lazy {
 val globalHeight by lazy {
     globalMetrics.heightPixels
 }
-
 
 
 var account

@@ -2,15 +2,13 @@ package com.sweetcam.app.view.topon
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import com.anythink.banner.api.ATBannerExListener
+import com.anythink.banner.api.ATBannerView
 import com.anythink.core.api.ATAdInfo
-import com.anythink.nativead.banner.api.ATNativeBannerConfig
-import com.anythink.nativead.banner.api.ATNativeBannerListener
-import com.anythink.nativead.banner.api.ATNativeBannerSize
-import com.anythink.nativead.banner.api.ATNativeBannerView
-import com.sweetcam.app.R
+import com.anythink.core.api.AdError
+import com.pipipi.camhd.R
 import com.sweetcam.app.utils.app
 import com.sweetcam.app.utils.loge
 
@@ -18,58 +16,61 @@ class TopOnBannerAdView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) :
-    FrameLayout(context, attrs, defStyleAttr) {
+) : FrameLayout(context, attrs, defStyleAttr) {
 
-    private val bannerView by lazy {
-        ATNativeBannerView(context)
+    companion object {
+        val bannerView by lazy {
+            ATBannerView(app)
+        }
     }
 
     init {
-        addView(bannerView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        addBanner()
+    }
 
+    private fun addBanner() {
         bannerView.apply {
-            setUnitId(app.getString(R.string.top_on_banner_ad_id))
-            val configAuto = ATNativeBannerConfig()
-            configAuto.bannerSize = ATNativeBannerSize.BANNER_SIZE_AUTO
-            configAuto.isCtaBtnShow = true
-            configAuto.ctaBgColor = -0x1000000
-            configAuto.ctaColor = -0xff0100
-            configAuto.titleColor = -0x1
-            setBannerConfig(configAuto)
-            setLocalExtra(mutableMapOf())
-            setBackgroundColor(-0x1)
-
-            setAdListener(object : ATNativeBannerListener {
-                override fun onAdLoaded() {
-                    "TopOnBannerAdView onAdLoaded".loge()
+            setPlacementId(app.getString(R.string.top_on_banner_ad_id))
+            (bannerView.parent as? ViewGroup)?.removeView(bannerView)
+            this@TopOnBannerAdView.addView(
+                bannerView,
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT
+            )
+            setBannerAdListener(object : ATBannerExListener {
+                override fun onBannerLoaded() {
+                    "TopOnBannerAdView onBannerLoaded".loge()
                 }
 
-                override fun onAdError(p0: String?) {
-                    "TopOnBannerAdView onAdError $p0".loge()
+                override fun onBannerFailed(p0: AdError?) {
+                    "TopOnBannerAdView onBannerFailed $p0".loge()
                 }
 
-                override fun onAdClick(p0: ATAdInfo?) {
-                    "TopOnBannerAdView onAdClick".loge()
+                override fun onBannerClicked(p0: ATAdInfo?) {
+                    "TopOnBannerAdView onBannerClicked $p0".loge()
                 }
 
-                override fun onAdClose() {
-                    "TopOnBannerAdView onAdClose".loge()
+                override fun onBannerShow(p0: ATAdInfo?) {
+                    "TopOnBannerAdView onBannerShow $p0".loge()
                 }
 
-                override fun onAdShow(p0: ATAdInfo?) {
-                    "TopOnBannerAdView onAdShow".loge()
+                override fun onBannerClose(p0: ATAdInfo?) {
+                    "TopOnBannerAdView onBannerClose $p0".loge()
                 }
 
-                override fun onAutoRefresh(p0: ATAdInfo?) {
-                    "TopOnBannerAdView onAutoRefresh".loge()
+                override fun onBannerAutoRefreshed(p0: ATAdInfo?) {
+                    "TopOnBannerAdView onBannerAutoRefreshed $p0".loge()
                 }
 
-                override fun onAutoRefreshFail(p0: String?) {
-                    "TopOnBannerAdView onAutoRefreshFail".loge()
+                override fun onBannerAutoRefreshFail(p0: AdError?) {
+                    "TopOnBannerAdView onBannerAutoRefreshFail $p0".loge()
+                }
+
+                override fun onDeeplinkCallback(p0: Boolean, p1: ATAdInfo?, p2: Boolean) {
+                    "TopOnBannerAdView onDeeplinkCallback $p0".loge()
                 }
             })
-            loadAd(null)
         }
+        bannerView.loadAd()
     }
 }

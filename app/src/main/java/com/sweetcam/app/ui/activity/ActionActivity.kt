@@ -1,12 +1,12 @@
 package com.sweetcam.app.ui.activity
 
-import com.sweetcam.app.callback.IDialogCallBack
+import com.pipipi.camhd.R
 import com.sweetcam.app.base.BaseActivity
-import com.sweetcam.app.utils.loadWith
-import com.sweetcam.app.R
+import com.sweetcam.app.callback.IDialogCallBack
 import com.sweetcam.app.ui.dialog.ContentDialog
 import com.sweetcam.app.ui.dialog.ShareDialog
 import com.sweetcam.app.utils.click
+import com.sweetcam.app.utils.loadWith
 import kotlinx.android.synthetic.main.activity_slimming.*
 
 class ActionActivity : BaseActivity(R.layout.activity_slimming), IDialogCallBack {

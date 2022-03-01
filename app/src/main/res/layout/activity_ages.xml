@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.activity.OldActivity">
+    tools:context="com.sweetcam.app.ui.activity.OldActivity">
 
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/age_pv"

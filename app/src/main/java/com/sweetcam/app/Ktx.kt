@@ -7,6 +7,8 @@ import com.anythink.core.api.ATSDK
 import com.applovin.sdk.AppLovinMediationProvider
 import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkSettings
+import com.pipipi.camhd.BuildConfig
+import com.pipipi.camhd.R
 import com.sweetcam.app.utils.loge
 import com.tencent.mmkv.MMKV
 import kotlin.system.measureTimeMillis
@@ -50,7 +52,7 @@ class Ktx private constructor(application: Application) {
         }
     }
 
-    private fun initOther(){
+    private fun initOther() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val processName = Application.getProcessName()
             if (app.packageName != processName) {

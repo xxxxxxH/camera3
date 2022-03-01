@@ -1,8 +1,8 @@
 package com.sweetcam.app.adapter
 
-import com.sweetcam.app.R
-import com.sweetcam.app.pojo.ResourcePojo
+import com.pipipi.camhd.R
 import com.sweetcam.app.base.BaseAdapter
+import com.sweetcam.app.pojo.ResourcePojo
 import com.sweetcam.app.utils.loadWith
 import kotlinx.android.synthetic.main.item_cartoon.*
 

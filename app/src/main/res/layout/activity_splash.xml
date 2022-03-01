@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical"
-    tools:context=".ui.activity.IndexActivity">
+    tools:context="com.sweetcam.app.ui.activity.IndexActivity">
 
     <FrameLayout
         android:id="@+id/activitySplashFl"

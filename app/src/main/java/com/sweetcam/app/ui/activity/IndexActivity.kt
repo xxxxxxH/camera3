@@ -3,8 +3,8 @@ package com.sweetcam.app.ui.activity
 import android.content.Intent
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import com.sweetcam.app.*
-import com.sweetcam.app.R
+import com.pipipi.camhd.R
+import com.sweetcam.app.BusDestroyEvent
 import com.sweetcam.app.base.BaseActivity
 import com.sweetcam.app.utils.*
 import kotlinx.android.synthetic.main.activity_splash.*

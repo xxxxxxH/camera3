@@ -1,100 +1,155 @@
 package com.sweetcam.app.ui.activity
 
 import android.content.Intent
-import com.luck.picture.lib.basic.PictureSelector
-import com.luck.picture.lib.config.SelectMimeType
-import com.luck.picture.lib.entity.LocalMedia
-import com.luck.picture.lib.interfaces.OnResultCallbackListener
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
+import android.text.TextUtils
+import android.view.View
+import androidx.core.content.FileProvider
+import com.lcw.library.imagepicker.ImagePicker
+import com.lcw.library.imagepicker.provider.ImagePickerProvider
+import com.pipipi.camhd.R
+import com.sdsmdg.tastytoast.TastyToast
 import com.sweetcam.app.base.BaseActivity
+import com.sweetcam.app.utils.GlideLoader
+import com.sweetcam.app.utils.MessageEvent
 import com.sweetcam.app.utils.requestPermission
-import com.sweetcam.app.R
-import com.sweetcam.app.GlideEngine
-import com.sweetcam.app.callback.IDialogCallBack
-import com.sweetcam.app.ui.dialog.ContentDialog
-import com.sweetcam.app.utils.click
-import kotlinx.android.synthetic.main.activity_main.*
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
+import java.io.File
 
-class MainActivity : BaseActivity(R.layout.activity_main), IDialogCallBack {
+class MainActivity : BaseActivity(R.layout.activity_main) {
+
+    private var mFilePath: String = ""
+
+    private var isPer = false
 
     override fun onConvert() {
-        activityMainTvLeft.click {
-            showInsertAd(isForce = true, tag = "inter_loading").let {
-                if (!it) {
-                    openGallery(0)
-                }
-            }
-        }
-        activityMainTvRight.click {
-            showInsertAd(tag = "inter_slim").let {
-                if (!it) {
-                    openGallery(1)
-                }
-            }
-        }
-        activityMainIvAction.click {
-            showInsertAd(tag = "inter_camera").let {
-                if (!it) {
-                    openCamera()
-                }
-            }
-        }
 
         requestPermission()
     }
 
     private fun openGallery(targetAc: Int) {
-        PictureSelector.create(this)
-            .openGallery(SelectMimeType.ofImage())
-            .setImageEngine(GlideEngine)
-            .setMaxSelectNum(1)
-            .forResult(object : OnResultCallbackListener<LocalMedia> {
-                override fun onResult(result: ArrayList<LocalMedia>?) {
-                    result?.let {
-                        val url = result[0].realPath
-                        val intent: Intent?
-                        when (targetAc) {
-                            0 -> {
-                                intent = Intent(this@MainActivity, StickerActivity::class.java)
-                                intent.putExtra("url", url)
-                            }
-                            1 -> {
-                                intent = Intent(this@MainActivity, ActionActivity::class.java)
-                                intent.putExtra("url", url)
-                            }
-                            else -> return@let
+        ImagePicker.getInstance()
+            .setTitle("select")
+            .showCamera(false)
+            .showVideo(false)
+            .showImage(true)
+            .setSingleType(true)
+            .setImageLoader(GlideLoader())
+            .start(this, targetAc)
+    }
+
+
+    fun optionClick(view: View) {
+        if (!isPer) return
+        val desc = view.contentDescription.toString().toInt()
+        if (desc == 5) {
+            try {
+                val fileDir = File(Environment.getExternalStorageDirectory(), "Pictures")
+                if (!fileDir.exists()) {
+                    fileDir.mkdir()
+                }
+                mFilePath = fileDir.absolutePath + "/IMG_" + System.currentTimeMillis() + ".jpg"
+
+                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                val uri: Uri = if (Build.VERSION.SDK_INT >= 24) {
+                    FileProvider.getUriForFile(
+                        this,
+                        ImagePickerProvider.getFileProviderName(this),
+                        File(mFilePath)
+                    )
+                } else {
+                    Uri.fromFile(File(mFilePath))
+                }
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+                startActivityForResult(intent, 100)
+            } catch (e: Exception) {
+                TastyToast.makeText(this, "camera error", TastyToast.LENGTH_SHORT, TastyToast.ERROR)
+            }
+        } else {
+            openGallery(desc)
+        }
+
+    }
+
+    private fun startNextActivity(clazz: Class<*>, url: String) {
+        val i = Intent(this, clazz)
+        i.putExtra("url", url)
+        startActivity(i)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 100) {
+                try {
+                    sendBroadcast(
+                        Intent(
+                            Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                            Uri.parse("file://$mFilePath")
+                        )
+                    )
+                } catch (e: Exception) {
+                    TastyToast.makeText(
+                        this,
+                        "scan imgs error",
+                        TastyToast.LENGTH_SHORT,
+                        TastyToast.ERROR
+                    )
+                }
+            } else {
+                data?.let {
+                    val url: String =
+                        (it.getStringArrayListExtra(ImagePicker.EXTRA_SELECT_IMAGES) as ArrayList<String>)[0]
+                    if (TextUtils.isEmpty(url))
+                        return@let
+                    when (requestCode) {
+                        1 -> {
+                            startNextActivity(StickerActivity::class.java, url)
                         }
-                        startActivity(intent)
+                        2 -> {
+                            startNextActivity(SlimmingActivity::class.java, url)
+                        }
+                        3 -> {
+                            startNextActivity(CartoonActivity::class.java, url)
+                        }
+                        4 -> {
+                            startNextActivity(AgeActivity::class.java, url)
+                        }
                     }
                 }
-
-                override fun onCancel() {}
-            })
+            }
+        }
     }
 
-    private fun openCamera() {
-        PictureSelector.create(this@MainActivity)
-            .openCamera(SelectMimeType.ofImage())
-            .forResult(object : OnResultCallbackListener<LocalMedia> {
-                override fun onResult(result: ArrayList<LocalMedia>?) {
-                    result?.let {
-                        val url = result[0].realPath
-                        intent = Intent(this@MainActivity, ContentActivity::class.java)
-                        intent.putExtra("url", url)
-                        startActivity(intent)
-                    }
-                }
-
-                override fun onCancel() {}
-            })
-    }
-
-    override fun onBackPressed() {
-        ContentDialog.newInstance("Are you sure to exit the application?").show(supportFragmentManager, "")
-    }
-
-    override fun onClick(position: Int) {
-        if (position == 0) {
-            super.onBackPressed()
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(e: MessageEvent) {
+        val msg = e.getMessage()
+        when (msg[0]) {
+            "onGranted" -> {
+                isPer = true
+            }
+            "not all" -> {
+                TastyToast.makeText(
+                    this,
+                    "some permissions were not granted normally",
+                    TastyToast.LENGTH_SHORT,
+                    TastyToast.ERROR
+                )
+                finish()
+            }
+            "onDenied" -> {
+                TastyToast.makeText(
+                    this,
+                    "no permissions",
+                    TastyToast.LENGTH_SHORT,
+                    TastyToast.ERROR
+                )
+                finish()
+            }
         }
     }
 }

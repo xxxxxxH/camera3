@@ -8,7 +8,7 @@ import com.applovin.mediation.MaxError
 import com.applovin.mediation.nativeAds.MaxNativeAdListener
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
-import com.sweetcam.app.R
+import com.pipipi.camhd.R
 import com.sweetcam.app.utils.app
 import com.sweetcam.app.utils.loge
 

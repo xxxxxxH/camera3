@@ -179,6 +179,6 @@ private fun devkitServiceCreator() =
         .Builder()
         .client(clientCreator())
         .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl("https://ajina.space/")
+        .baseUrl("https://hosting432.space/")
         .build()
         .create(AppService::class.java)

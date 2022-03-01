@@ -4,12 +4,11 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import com.anythink.core.api.ATAdConst
 import com.anythink.core.api.AdError
 import com.anythink.nativead.api.ATNative
 import com.anythink.nativead.api.ATNativeAdView
 import com.anythink.nativead.api.ATNativeNetworkListener
-import com.sweetcam.app.R
+import com.pipipi.camhd.R
 import com.sweetcam.app.utils.app
 import com.sweetcam.app.utils.loge
 
@@ -34,7 +33,7 @@ class TopOnNativeAdView @JvmOverloads constructor(
     private var atNative: ATNative? = null
 
     private val render by lazy {
-        NativeDemoRender(context)
+        TopOnRender(context)
     }
 
     private val atNativeAdView by lazy {
@@ -42,34 +41,24 @@ class TopOnNativeAdView @JvmOverloads constructor(
     }
 
     init {
-        addView(atNativeAdView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        atNative = ATNative(context, app.getString(R.string.top_on_native_ad_id), object : ATNativeNetworkListener {
-            override fun onNativeAdLoaded() {
-                "TopOnNativeAdView onNativeAdLoaded".loge()
-                onAdLoad()
-            }
+        addView(
+            atNativeAdView,
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        atNative = ATNative(
+            context,
+            app.getString(R.string.top_on_native_ad_id),
+            object : ATNativeNetworkListener {
+                override fun onNativeAdLoaded() {
+                    "TopOnNativeAdView onNativeAdLoaded".loge()
+                    onAdLoad()
+                }
 
-            override fun onNativeAdLoadFail(p0: AdError?) {
-                "TopOnNativeAdView onNativeAdLoadFail $p0".loge()
-            }
-        }).apply {
-            var fixWidth = width
-            var fixHeight = height
-            if (fixWidth == 0 || fixHeight == 0) {
-                measure(0, 0)
-            }
-            if (fixWidth == 0) {
-                fixWidth = measuredWidth
-            }
-            if (fixHeight == measuredHeight) {
-                fixHeight = measuredHeight
-            }
-            setLocalExtra(
-                mutableMapOf<String, Any>(
-                    ATAdConst.KEY.AD_WIDTH to fixWidth,
-                    ATAdConst.KEY.AD_HEIGHT to fixHeight
-                )
-            )
+                override fun onNativeAdLoadFail(p0: AdError?) {
+                    "TopOnNativeAdView onNativeAdLoadFail $p0".loge()
+                }
+            }).apply {
             makeAdRequest()
         }
 

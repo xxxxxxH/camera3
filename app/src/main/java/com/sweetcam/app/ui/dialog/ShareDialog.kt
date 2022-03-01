@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
-import com.sweetcam.app.R
+import com.pipipi.camhd.R
 import com.sweetcam.app.base.BaseDialog
 import com.sweetcam.app.utils.app
 import kotlinx.coroutines.Dispatchers

@@ -1,62 +1,108 @@
 package com.sweetcam.app.ui.activity
 
-import android.os.Environment
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
+import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.Intent
+import android.graphics.Bitmap
+import android.os.Handler
+import android.os.Message
+import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
-import com.sweetcam.app.callback.IDialogCallBack
+import com.lcw.library.stickerview.Sticker
+import com.pacific.adapter.AdapterUtils
+import com.pacific.adapter.AdapterViewHolder
+import com.pacific.adapter.RecyclerAdapter
+import com.pipipi.camhd.R
+import com.sdsmdg.tastytoast.TastyToast
 import com.sweetcam.app.base.BaseActivity
-import com.sweetcam.app.R
-import com.sweetcam.app.adapter.StickerAdapter
-import com.sweetcam.app.ui.dialog.ContentDialog
-import com.sweetcam.app.ui.dialog.ShareDialog
-import com.sweetcam.app.utils.click
-import com.sweetcam.app.utils.getResourceByFolder
-import com.sweetcam.app.utils.loadWith
-import com.sweetcam.app.view.paster.DrawablePaster
+import com.sweetcam.app.item.StickerItem
+import com.sweetcam.app.utils.AssetsManager
+import com.sweetcam.app.utils.MessageEvent
+import com.sweetcam.app.utils.createBitmapFromView
+import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_sticker.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.io.File
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
+import kotlin.concurrent.thread
 
-class StickerActivity : BaseActivity(R.layout.activity_sticker), IDialogCallBack {
+class StickerActivity : BaseActivity(R.layout.activity_sticker) {
 
-    override fun onConvert() {
-        val url = intent.getStringExtra("url")
+    var dialog: AlertDialog? = null
 
-        url?.let {
-            show_edit_iv.loadWith(it)
-            recycler.layoutManager = GridLayoutManager(this, 4)
-            recycler.adapter = StickerAdapter(getResourceByFolder(R.mipmap::class.java, "mipmap", "sticker")).apply {
-                setOnItemClickListener {
-                    val drawable = ContextCompat.getDrawable(this@StickerActivity, it.id)
-                    drawable?.let {
-                        sticker_view.addSticker(DrawablePaster(it))
+    private val handler: Handler = @SuppressLint("HandlerLeak")
+    object : Handler() {
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            when (msg.what) {
+                1 -> {
+                    val data: ArrayList<Bitmap> = msg.obj as ArrayList<Bitmap>
+                    val adapter = RecyclerAdapter()
+                    data.forEach {
+                        adapter.add(StickerItem(this@StickerActivity, it))
+                    }
+                    recycler.layoutManager = GridLayoutManager(this@StickerActivity, 3)
+                    recycler.adapter = adapter
+                    adapter.onClickListener = View.OnClickListener {
+                        val holder: AdapterViewHolder = AdapterUtils.getHolder(it)
+                        val bitmap = data[holder.bindingAdapterPosition]
+                        val s = Sticker(this@StickerActivity, bitmap)
+                        stickers.addSticker(s)
                     }
                 }
             }
-            cancel.click {
-                finish()
-            }
-            save.click {
-                ContentDialog.newInstance(
-                    "Saving", rightVisible = false
-                ).show(supportFragmentManager, "")
-
-                lifecycleScope.launch(Dispatchers.IO) {
-                    val file =
-                        File(Environment.getExternalStorageDirectory().absolutePath + File.separator + System.currentTimeMillis() + "_sticker.jpg")
-                    sticker_view.save(file)
-                }
-            }
-        } ?: kotlin.run {
-            finish()
         }
     }
 
-    override fun onClick(position: Int) {
-        if (position == 0) {
-            ShareDialog.newInstance().show(supportFragmentManager, "")
+    override fun onConvert() {
+        val url = intent.getStringExtra("url")
+        iv.displayImage(url)
+        initData()
+    }
+
+    private fun initData() {
+        thread {
+            val data = AssetsManager.get().getStickers(this)
+            val msg = Message()
+            msg.what = 1
+            msg.obj = data
+            handler.sendMessage(msg)
+        }
+    }
+
+    fun optionClick(view: View) {
+        when (view.contentDescription) {
+            "cancel" -> {
+                finish()
+            }
+            "save" -> {
+                dialog = SpotsDialog.Builder().setContext(this).build()
+                dialog!!.show()
+                thread {
+                    createBitmapFromView(main)
+                }
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(e: MessageEvent) {
+        val msg = e.getMessage()
+        when (msg[0]) {
+            "saveSuccess" -> {
+                dialog!!.dismiss()
+                TastyToast.makeText(
+                    this,
+                    "save success",
+                    TastyToast.LENGTH_SHORT,
+                    TastyToast.SUCCESS
+                )
+                startActivity(Intent(this, CreationActivity::class.java))
+                finish()
+            }
+            "saveError" -> {
+                dialog!!.dismiss()
+                TastyToast.makeText(this, "save failed", TastyToast.LENGTH_SHORT, TastyToast.ERROR)
+            }
         }
     }
 }

@@ -3,7 +3,6 @@ package com.sweetcam.app.base
 import android.os.Bundle
 import android.util.Log
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -17,8 +16,9 @@ import com.applovin.mediation.MaxAd
 import com.applovin.mediation.MaxAdListener
 import com.applovin.mediation.MaxError
 import com.applovin.mediation.ads.MaxInterstitialAd
-import com.sweetcam.app.*
+import com.pipipi.camhd.R
 import com.sweetcam.app.utils.*
+import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -33,8 +33,12 @@ abstract class BaseActivity(layoutId: Int) : AppCompatActivity(layoutId) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        createMaxInterstitialAd()
-        createOpenAd()
+        //用Lovin的插屏
+//        createLovinInterstitialAd()
+        //用TopOn的插屏
+//        createTopOnInterstitialAd()
+//        createOpenAd()
+        MMKV.initialize(this)
         onConvert()
     }
 
@@ -56,31 +60,31 @@ abstract class BaseActivity(layoutId: Int) : AppCompatActivity(layoutId) {
         }.bindWithLifecycle(this)
     }
 
-    override fun onStop() {
-        super.onStop()
-        isBackground = isInBackground()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (isBackground) {
-            isBackground = false
-            val content = findViewById<ViewGroup>(android.R.id.content)
-            (content.getTag(R.id.open_ad_view_id) as? FrameLayout)?.let {
-                showOpenAd(it)
-            } ?: kotlin.run {
-                FrameLayout(this).apply {
-                    layoutParams = FrameLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
-                    content.addView(this)
-                    content.setTag(R.id.open_ad_view_id, this)
-                    showOpenAd(this)
-                }
-            }
-        }
-    }
+//    override fun onStop() {
+//        super.onStop()
+//        isBackground = isInBackground()
+//    }
+//
+//    override fun onResume() {
+//        super.onResume()
+//        if (isBackground) {
+//            isBackground = false
+//            val content = findViewById<ViewGroup>(android.R.id.content)
+//            (content.getTag(R.id.open_ad_view_id) as? FrameLayout)?.let {
+//                showOpenAd(it)
+//            } ?: kotlin.run {
+//                FrameLayout(this).apply {
+//                    layoutParams = FrameLayout.LayoutParams(
+//                        ViewGroup.LayoutParams.MATCH_PARENT,
+//                        ViewGroup.LayoutParams.MATCH_PARENT
+//                    )
+//                    content.addView(this)
+//                    content.setTag(R.id.open_ad_view_id, this)
+//                    showOpenAd(this)
+//                }
+//            }
+//        }
+//    }
 
     private fun createOpenAd(offset: Long = 0L) {
         lifecycleScope.launch(Dispatchers.IO) {
@@ -208,7 +212,11 @@ abstract class BaseActivity(layoutId: Int) : AppCompatActivity(layoutId) {
         }
     }
 
-    fun showInsertAd(showByPercent: Boolean = false, isForce: Boolean = false, tag: String = ""): Boolean {
+    fun showInsertAd(
+        showByPercent: Boolean = false,
+        isForce: Boolean = false,
+        tag: String = ""
+    ): Boolean {
         if (isForce) {
             return showInsertAdImpl(tag)
         } else {

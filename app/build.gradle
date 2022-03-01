@@ -107,4 +107,11 @@ dependencies {
     api 'com.applovin.mediation:facebook-adapter:6.8.0.12'
     api 'com.applovin.mediation:google-ad-manager-adapter:20.6.0.0'
     api 'com.applovin.mediation:google-adapter:20.6.0.0'
+
+    implementation 'com.lcw.library:imagepicker:2.2.7'
+    implementation 'com.sdsmdg.tastytoast:tastytoast:0.1.1'
+    implementation("io.github.panpf.sketch:sketch:2.7.1")
+    implementation 'com.lcw.library:StickeView:1.0.1'
+    implementation 'com.github.thepacific:adapter:3.0.3'
+    implementation 'com.github.d-max:spots-dialog:1.1@aar'
 }
