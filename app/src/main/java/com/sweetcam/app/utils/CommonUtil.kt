@@ -118,33 +118,14 @@ fun AppCompatActivity.requestPermission(block: () -> Unit = {}) {
                     EventBus.getDefault().post(MessageEvent("onGranted"))
                 } else {
                     EventBus.getDefault().post(MessageEvent("not all"))
-
                 }
             }
 
             override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
                 super.onDenied(permissions, never)
                 EventBus.getDefault().post(MessageEvent("onDenied"))
-
             }
         })
-}
-
-fun getResourceByFolder(
-    clazz: Class<*>,
-    folderName: String,
-    filter: String
-): ArrayList<com.sweetcam.app.pojo.ResourcePojo> {
-    val result = ArrayList<com.sweetcam.app.pojo.ResourcePojo>()
-    for (field in clazz.fields) {
-        val name = field.name
-        if (name.startsWith(filter)) {
-            val id = app.resources.getIdentifier(name, folderName, app.packageName)
-            val entity = com.sweetcam.app.pojo.ResourcePojo(name, id)
-            result.add(entity)
-        }
-    }
-    return result
 }
 
 fun ImageView.loadWith(any: Any) {

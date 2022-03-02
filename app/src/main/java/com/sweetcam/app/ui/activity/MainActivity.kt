@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import androidx.core.content.FileProvider
 import com.lcw.library.imagepicker.ImagePicker
@@ -16,18 +17,19 @@ import com.sweetcam.app.base.BaseActivity
 import com.sweetcam.app.utils.GlideLoader
 import com.sweetcam.app.utils.MessageEvent
 import com.sweetcam.app.utils.requestPermission
+import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.File
 
-class MainActivity : BaseActivity(R.layout.activity_main) {
+class MainActivity : BaseActivity(R.layout.activity_main_new) {
 
     private var mFilePath: String = ""
 
     private var isPer = false
 
     override fun onConvert() {
-
+        registerEventBus()
         requestPermission()
     }
 
@@ -128,6 +130,12 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(e: MessageEvent) {
         val msg = e.getMessage()
+        TastyToast.makeText(
+            this,
+            "${msg[0]}",
+            TastyToast.LENGTH_SHORT,
+            TastyToast.ERROR
+        )
         when (msg[0]) {
             "onGranted" -> {
                 isPer = true

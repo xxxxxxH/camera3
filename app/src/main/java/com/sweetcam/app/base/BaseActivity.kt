@@ -38,7 +38,6 @@ abstract class BaseActivity(layoutId: Int) : AppCompatActivity(layoutId) {
         //用TopOn的插屏
 //        createTopOnInterstitialAd()
 //        createOpenAd()
-        MMKV.initialize(this)
         onConvert()
     }
 
